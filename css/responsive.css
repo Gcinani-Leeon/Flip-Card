@@ -1,0 +1,34 @@
+@container bc-payment-flip-card (max-width: 480px) {
+  .fpc-stage {
+    gap: var(--spacing-4);
+  }
+  .fpc-card__number {
+    font-size: var(--fpc-number-size-sm);
+    gap: var(--flip-card-spacing-fpc-card-number-gap, 1rem);
+  }
+  .fpc-card__signature {
+    width: var(--flip-card-dimension-fpc-card-signature-width, 12rem);
+    padding: var(--flip-card-spacing-fpc-card-signature-padding, 0.25rem 1.5rem);
+  }
+  .fpc-hint {
+    padding: var(--flip-card-spacing-fpc-hint-padding, 0 1rem);
+  }
+}
+
+/* A narrow screen still needs a gutter: at 0 the card met both edges of the
+   viewport, which reads as clipped rather than full-bleed. */
+@media (max-width: 480px) {
+  body {
+    padding: var(--flip-card-spacing-body-padding, var(--spacing-4));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: var(--flip-card-motion-root-animation-duration, 0.01ms) !important;
+    animation-iteration-count: var(--flip-card-motion-root-animation-iteration-count, 1) !important;
+    transition-duration: var(--flip-card-motion-root-transition-duration, 0.01ms) !important;
+  }
+}

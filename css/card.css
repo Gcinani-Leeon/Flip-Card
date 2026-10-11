@@ -1,0 +1,416 @@
+.fpc-stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: min(var(--spacing-6), 1.5rem);
+  width: var(--flip-card-dimension-fpc-stage-width, 100%);
+  /* Perspective lives on the stage so the hover tilt on the button and the
+       rotateY flip on the inner share one vanishing point. */
+  perspective: 1100px;
+}
+
+.fpc-card {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  margin: var(--flip-card-spacing-fpc-card-margin, 0);
+  padding: var(--flip-card-spacing-fpc-card-padding, 0);
+  border: var(--flip-card-border-fpc-card-border, none);
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  width: min(var(--fpc-card-w), 100%);
+  height: var(--fpc-card-h);
+  border-radius: var(--fpc-card-radius);
+  transform-style: preserve-3d;
+  transition: var(
+    --flip-card-motion-fpc-card-transition,
+    transform 0.45s cubic-bezier(0.3, 0.6, 0.2, 1)
+  );
+}
+
+/* Pointer-only preview: the card lifts and tilts toward the cursor instead of
+   flipping outright, so the click keeps its payoff. The controller steers
+   --fpc-tilt-x/y from the pointer's position over the face, so the tilt
+   adjusts across the whole card; the fixed pose is only the no-JS fallback. */
+.fpc-card:hover:not(.is-flipped) {
+  transform: translateY(-0.3rem) rotateX(var(--fpc-tilt-x, 4deg)) rotateY(var(--fpc-tilt-y, -7deg));
+}
+
+.fpc-card.is-flipped:hover {
+  transform: translateY(-0.3rem) rotateX(var(--fpc-tilt-x, 4deg)) rotateY(var(--fpc-tilt-y, 7deg));
+}
+
+/* While the pointer is steering, the outer transform tracks on a short glide
+   instead of the slow settle transition, so the tilt feels attached to the
+   cursor. The flip itself lives on the inner and keeps its own timing. */
+.fpc-card.is-tilting {
+  transition: transform 140ms cubic-bezier(0.2, 0.6, 0.3, 1);
+}
+
+/* Mid-flip lift: the card scales up and rises through the turn, then settles.
+   Runs on the dedicated scale/translate properties so it composes with the
+   hover tilt (transform) and the rotateY transition on the inner. `has-flipped`
+   is added by the controller on the first flip so the return animation never
+   fires on initial load. */
+.fpc-card.is-flipped {
+  animation: fpc-lift-to-back 0.7s cubic-bezier(0.34, 0.65, 0.28, 1) both;
+}
+
+.fpc-card.has-flipped:not(.is-flipped) {
+  animation: fpc-lift-to-front 0.7s cubic-bezier(0.34, 0.65, 0.28, 1) both;
+}
+
+@keyframes fpc-lift-to-back {
+  0%,
+  100% {
+    scale: 1;
+    translate: 0 0;
+  }
+  45% {
+    scale: 1.045;
+    translate: 0 -0.4rem;
+  }
+}
+
+@keyframes fpc-lift-to-front {
+  0%,
+  100% {
+    scale: 1;
+    translate: 0 0;
+  }
+  45% {
+    scale: 1.045;
+    translate: 0 -0.4rem;
+  }
+}
+
+.fpc-card__inner {
+  position: relative;
+  display: block;
+  width: var(--flip-card-dimension-fpc-card-inner-width, 100%);
+  height: var(--flip-card-dimension-fpc-card-inner-height, 100%);
+  border-radius: var(--fpc-card-radius);
+  box-shadow:
+    0 1px 1px color-mix(in srgb, var(--fpc-magstripe) 12%, transparent),
+    0 12px 24px color-mix(in srgb, var(--fpc-magstripe) 18%, transparent),
+    0 26px 54px color-mix(in srgb, var(--fpc-magstripe) 15%, transparent);
+  transform-style: preserve-3d;
+  transform-origin: center;
+  transition: var(
+    --flip-card-motion-fpc-card-inner-transition,
+    transform 0.7s cubic-bezier(0.3, 0.7, 0.2, 1),
+    box-shadow 0.35s ease
+  );
+}
+
+.fpc-card.is-flipped .fpc-card__inner {
+  transform: rotateY(180deg);
+}
+
+.fpc-card:hover .fpc-card__inner,
+.fpc-card:focus-visible .fpc-card__inner {
+  box-shadow:
+    0 2px 2px color-mix(in srgb, var(--fpc-magstripe) 10%, transparent),
+    0 18px 30px color-mix(in srgb, var(--fpc-magstripe) 20%, transparent),
+    0 34px 68px color-mix(in srgb, var(--fpc-magstripe) 18%, transparent);
+}
+
+.fpc-card__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--fpc-face-radius);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  color: var(--fpc-on-card);
+  background-color: var(--fpc-navy-top);
+  background-image:
+    radial-gradient(135% 100% at 12% -15%, var(--fpc-pattern-hi) 0, transparent 46%),
+    radial-gradient(130% 100% at 90% 118%, var(--fpc-pattern-lo) 0, transparent 48%),
+    repeating-radial-gradient(
+      circle at 98% 2%,
+      transparent 0 1.3rem,
+      var(--fpc-pattern-hi) 1.3rem 1.36rem,
+      transparent 1.36rem 2.6rem
+    ),
+    repeating-linear-gradient(
+      124deg,
+      transparent 0 1.7rem,
+      var(--fpc-pattern-hi) 1.72rem 1.8rem,
+      transparent 1.82rem 3.55rem
+    ),
+    repeating-linear-gradient(
+      124deg,
+      transparent 0 1.7rem,
+      var(--fpc-pattern-lo) 1.9rem 1.98rem,
+      transparent 2rem 3.55rem
+    ),
+    linear-gradient(158deg, var(--fpc-pattern-hi) 0, transparent 42%, var(--fpc-pattern-lo) 100%);
+  border: 1px solid color-mix(in srgb, var(--fpc-pattern-contrast) 18%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--fpc-pattern-contrast) 10%, transparent),
+    inset 0 -3.5rem 6rem color-mix(in srgb, var(--fpc-pattern-contrast) 10%, transparent);
+}
+
+.fpc-card__face--front {
+  justify-content: flex-end;
+  padding-block: var(--flip-card-spacing-fpc-card-face-front-padding-block, var(--spacing-5));
+  padding-inline: var(
+    --flip-card-spacing-fpc-card-face-front-padding-inline,
+    max(var(--spacing-6), 1.5rem)
+  );
+  transform: translateZ(1px);
+}
+
+.fpc-card__face--back {
+  transform: rotateY(180deg) translateZ(1px);
+}
+
+.fpc-card__logo {
+  position: absolute;
+  top: 2rem;
+  right: 1rem;
+  z-index: 2;
+  width: var(--flip-card-dimension-fpc-card-logo-width, 4rem);
+  color: var(--fpc-on-card);
+  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--fpc-pattern-contrast) 28%, transparent));
+}
+
+.fpc-card__logo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.fpc-card__chip {
+  position: relative;
+  top: 3.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: var(--flip-card-dimension-fpc-card-chip-width, 3rem);
+  height: var(--flip-card-dimension-fpc-card-chip-height, 2.5rem);
+  border-radius: var(--flip-card-radius-fpc-card-chip-border-radius, 0.3rem);
+  background:
+    radial-gradient(120% 100% at 18% 8%, rgba(255, 255, 255, 0.5) 0, transparent 46%),
+    linear-gradient(to bottom left, var(--fpc-chip-1), var(--fpc-chip-2));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 1px color-mix(in srgb, var(--fpc-chip-edge) 40%, transparent),
+    0 1px 2px color-mix(in srgb, var(--fpc-magstripe) 30%, transparent);
+}
+
+.fpc-card__chip-line {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: var(--fpc-chip-line);
+}
+
+.fpc-card__chip-line:nth-child(1) {
+  top: 13px;
+}
+.fpc-card__chip-line:nth-child(2) {
+  top: 20px;
+}
+.fpc-card__chip-line:nth-child(3) {
+  top: 28px;
+}
+.fpc-card__chip-line:nth-child(4) {
+  left: 25px;
+  width: 1px;
+  height: 50px;
+}
+
+.fpc-card__chip-core {
+  position: relative;
+  z-index: 1;
+  width: var(--flip-card-dimension-fpc-card-chip-core-width, 1.25rem);
+  height: var(--flip-card-dimension-fpc-card-chip-core-height, 1.45rem);
+  border: 1px solid var(--fpc-chip-edge);
+  border-radius: var(--flip-card-radius-fpc-card-chip-core-border-radius, 0.1875rem);
+  background: linear-gradient(to bottom left, var(--fpc-chip-core-1), var(--fpc-chip-core-2));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.fpc-card__wave {
+  position: absolute;
+  top: 4.25rem;
+  left: 4.5rem;
+  z-index: 2;
+  width: var(--flip-card-dimension-fpc-card-wave-width, 2.5rem);
+  height: var(--flip-card-dimension-fpc-card-wave-height, 2.5rem);
+  color: var(--fpc-on-card);
+  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--fpc-pattern-contrast) 28%, transparent));
+}
+
+.fpc-card__wave svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.fpc-card__number {
+  display: flex;
+  gap: var(--fpc-number-space);
+  margin-top: var(--flip-card-spacing-fpc-card-number-margin-top, auto);
+  font-family: var(--font-code);
+  font-size: var(--fpc-number-size);
+  font-weight: var(--flip-card-typography-fpc-card-number-font-weight, 600);
+  letter-spacing: var(--flip-card-typography-fpc-card-number-letter-spacing, 0.06em);
+  font-variant-numeric: tabular-nums;
+}
+
+.fpc-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--spacing-8);
+}
+
+.fpc-card__holder {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: var(--flip-card-typography-fpc-card-holder-font-weight, 600);
+  text-transform: uppercase;
+  letter-spacing: var(--flip-card-typography-fpc-card-holder-letter-spacing, 0.06em);
+}
+
+.fpc-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.fpc-card__exp {
+  font-family: var(--font-code);
+  font-size: var(--text-body);
+}
+
+.fpc-card__mc {
+  display: flex;
+}
+
+.fpc-card__mc-disc {
+  width: var(--flip-card-dimension-fpc-card-mc-disc-width, 2rem);
+  height: var(--flip-card-dimension-fpc-card-mc-disc-height, 2rem);
+  border-radius: max(50%, var(--rounded-r9999));
+}
+
+.fpc-card__mc-disc--red {
+  background: var(--fpc-mc-red);
+}
+
+.fpc-card__mc-disc--yellow {
+  margin-left: var(--flip-card-spacing-fpc-card-mc-disc-yellow-margin-left, -0.7rem);
+  background: color-mix(in srgb, var(--fpc-mc-yellow) 60%, transparent);
+}
+
+.fpc-card__number {
+  color: var(--fpc-on-card);
+}
+
+.fpc-card__holder,
+.fpc-card__exp,
+.fpc-card__signature-headline {
+  color: var(--fpc-on-card);
+}
+
+/* Layered emboss: a tight contact shadow plus a soft cast shadow, both riding
+   the ink-polarity token so raised text stays crisp on any card fill. */
+.fpc-card__number,
+.fpc-card__holder,
+.fpc-card__exp,
+.fpc-card__signature-headline {
+  text-shadow:
+    0 1px 0 color-mix(in srgb, var(--fpc-pattern-contrast) 45%, transparent),
+    0 2px 3px color-mix(in srgb, var(--fpc-pattern-contrast) 26%, transparent);
+}
+
+.fpc-card__stripe {
+  display: block;
+  width: var(--flip-card-dimension-fpc-card-stripe-width, 100%);
+  min-height: var(--flip-card-dimension-fpc-card-stripe-min-height, 3rem);
+  margin-top: var(--spacing-8);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--fpc-magstripe) 86%, #ffffff 14%) 0,
+    var(--fpc-magstripe) 24%,
+    var(--fpc-magstripe) 78%,
+    color-mix(in srgb, var(--fpc-magstripe) 88%, #ffffff 12%) 100%
+  );
+}
+
+.fpc-card__signature-wrap {
+  display: flex;
+  gap: var(--flip-card-spacing-fpc-card-signature-wrap-gap, 0.5rem);
+  margin-top: var(--spacing-8);
+  padding: var(--flip-card-spacing-fpc-card-signature-wrap-padding, 0 2rem);
+}
+
+.fpc-card__signature-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--flip-card-spacing-fpc-card-signature-field-gap, 0.25rem);
+}
+
+.fpc-card__signature-headline {
+  font-family: var(--font-ui);
+  font-size: var(--fpc-headline-size);
+  text-transform: uppercase;
+  letter-spacing: var(--flip-card-typography-fpc-card-signature-headline-letter-spacing, 0.08em);
+}
+
+.fpc-card__signature {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--flip-card-dimension-fpc-card-signature-width, 15rem);
+  height: var(--flip-card-dimension-fpc-card-signature-height, 2rem);
+  padding: var(--flip-card-spacing-fpc-card-signature-padding, 0.25rem 2.5rem);
+  border-radius: var(--flip-card-radius-fpc-card-signature-border-radius, 0.2rem);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 0.45rem,
+      color-mix(in srgb, var(--fpc-sig-ink) 8%, transparent) 0.45rem 0.5rem
+    ),
+    var(--fpc-sig-paper);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fpc-sig-ink) 12%, transparent);
+  color: var(--fpc-sig-ink);
+  font-family: var(--font-signature);
+  font-size: var(--fpc-sig-size);
+  font-weight: var(--flip-card-typography-fpc-card-signature-font-weight, 700);
+}
+
+.fpc-card__ccv {
+  display: flex;
+  align-self: flex-end;
+  align-items: center;
+  height: var(--flip-card-dimension-fpc-card-ccv-height, 1.5rem);
+  margin-bottom: var(--flip-card-spacing-fpc-card-ccv-margin-bottom, 0.25rem);
+  padding: var(--flip-card-spacing-fpc-card-ccv-padding, 0 0.5rem);
+  border-radius: var(--flip-card-radius-fpc-card-ccv-border-radius, 0.2rem);
+  background: var(--fpc-sig-paper);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fpc-sig-ink) 12%, transparent);
+  color: var(--fpc-magstripe);
+  font-family: var(--font-code);
+  font-weight: var(--flip-card-typography-fpc-card-ccv-font-weight, 700);
+  letter-spacing: var(--flip-card-typography-fpc-card-ccv-letter-spacing, 0.08em);
+}
+
+.fpc-hint {
+  max-width: var(--flip-card-dimension-fpc-hint-max-width, 26rem);
+  text-align: center;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: var(--text-small);
+}

@@ -1,0 +1,38 @@
+* {
+  margin: var(--flip-card-spacing-root-margin, 0);
+  padding: var(--flip-card-spacing-root-padding, 0);
+  box-sizing: border-box;
+}
+*::selection {
+  background: var(--primary);
+  color: var(--color-on-primary);
+}
+
+body {
+  min-height: var(--flip-card-dimension-body-min-height, 100dvh);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-6);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  background: var(--bg);
+  color: var(--text);
+  transition: var(--flip-card-motion-body-transition, background 0.4s ease, color 0.4s ease);
+  container-name: bc-payment-flip-card;
+  container-type: inline-size;
+  min-inline-size: 0;
+}
+
+.fpc-bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--bg);
+  transition: var(--flip-card-motion-fpc-bg-layer-transition, background 0.4s ease);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}

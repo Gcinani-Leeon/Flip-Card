@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" data-browse-ds="aperture">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Flip Card</title>
+    <meta
+      name="description"
+      content="A 3D flip credit card with a metallic-silver number, gold EMV chip, contactless glyph and duo-tone network marks on a navy face, flipping on click or keyboard to reveal the magnetic stripe, signature panel and CCV."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700&family=Allura&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="fpc-bg-layer"></div>
+
+    <main class="fpc-stage">
+      <button
+        type="button"
+        class="fpc-card"
+        id="fpc-card"
+        aria-pressed="false"
+        aria-label="Show the back of the card with the security code"
+      >
+        <span class="fpc-card__inner">
+          <span class="fpc-card__face fpc-card__face--front">
+            <span class="fpc-card__logo" id="fpc-logo" aria-hidden="true"></span>
+
+            <span class="fpc-card__chip" aria-hidden="true">
+              <span class="fpc-card__chip-line"></span>
+              <span class="fpc-card__chip-line"></span>
+              <span class="fpc-card__chip-line"></span>
+              <span class="fpc-card__chip-line"></span>
+              <span class="fpc-card__chip-core"></span>
+            </span>
+
+            <span class="fpc-card__wave" id="fpc-wave" aria-hidden="true"></span>
+
+            <span class="fpc-card__number">
+              <span class="fpc-card__group">4687</span>
+              <span class="fpc-card__group">1234</span>
+              <span class="fpc-card__group">6788</span>
+              <span class="fpc-card__group">3899</span>
+            </span>
+
+            <span class="fpc-card__bottom">
+              <span class="fpc-card__holder">David Mraz</span>
+              <span class="fpc-card__meta">
+                <span class="fpc-card__exp">05/27</span>
+                <span class="fpc-card__mc" aria-hidden="true">
+                  <span class="fpc-card__mc-disc fpc-card__mc-disc--red"></span>
+                  <span class="fpc-card__mc-disc fpc-card__mc-disc--yellow"></span>
+                </span>
+              </span>
+            </span>
+          </span>
+
+          <span class="fpc-card__face fpc-card__face--back">
+            <span class="fpc-card__stripe" aria-hidden="true"></span>
+            <span class="fpc-card__signature-wrap">
+              <span class="fpc-card__signature-field">
+                <span class="fpc-card__signature-headline">Authorized Signature</span>
+                <span class="fpc-card__signature">David Mraz</span>
+              </span>
+              <span class="fpc-card__ccv">123</span>
+            </span>
+          </span>
+        </span>
+      </button>
+
+      <p class="fpc-hint" id="fpc-hint">Click the card or press Enter to flip it.</p>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

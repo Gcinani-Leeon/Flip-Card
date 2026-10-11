@@ -1,0 +1,105 @@
+:root {
+  --bg: var(--color-background);
+  --surface: var(--color-surface);
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
+  --text: var(--color-text-primary);
+  --text-muted: var(
+    --color-secondary-light-readable,
+    color-mix(in srgb, var(--color-text-secondary) 65%, var(--color-text-primary) 35%)
+  );
+  --text-dim: var(
+    --color-neutral-readable,
+    color-mix(in srgb, var(--color-neutral) 65%, var(--color-text-primary) 35%)
+  );
+  --border: var(--color-border);
+  --success: var(--color-success);
+  --error: var(--color-error);
+  --warning: var(--color-warning);
+  --shadow: var(--shadow-light);
+  --ghost: var(--ghost-bg);
+  --ghost-active: var(--ghost-hover);
+  --ring: var(--primary-ink, var(--color-primary));
+  --skel-line: var(--skeleton-line-light);
+  --skel-peak: var(--skeleton-line-peak);
+
+  --font-heading: var(--font-display);
+  --font-ui: var(--font-body);
+  --font-signature: "Allura", "Segoe Script", "Snell Roundhand", cursive;
+}
+
+body.dark {
+  --bg: var(--dark-bg);
+  --surface: var(--dark-surface);
+  --text: var(--dark-text);
+  --text-muted: var(--dark-text-muted);
+  --text-dim: var(--dark-text-dim);
+  --border: var(--dark-border);
+  --shadow: var(--shadow-heavy);
+  --ghost: var(--dark-ghost-bg);
+  --ghost-active: var(--dark-ghost-hover);
+  --ring: var(--primary-ink, var(--color-primary));
+  --skel-line: var(--dark-skeleton-line-light);
+  --skel-peak: var(--dark-skeleton-line-peak);
+}
+
+body {
+  --fpc-navy-top: var(--selection-fill, var(--primary));
+  --fpc-navy-bottom: var(--selection-fill, var(--primary));
+  --fpc-on-card: var(--selection-ink, var(--color-on-primary));
+  /* app.js updates this polarity token whenever the design system changes:
+       dark details sit behind light ink and light details behind dark ink.
+       Used ONLY for borders / text-lift shadows, which must follow the ink. */
+  --fpc-pattern-contrast: #000000;
+  /* The decorative face pattern is derived from the card's OWN fill in BOTH
+       directions — a light tint and a dark shade — so a subtle geometric texture
+       is guaranteed to read no matter what hue or lightness the active design
+       system paints the card, instead of collapsing into the fill the way a
+       single ink-following mix did. app.js recomputes both tones per design
+       system with ink-contrast headroom awareness (see syncPatternContrast);
+       these fallbacks are the pre-script first paint, kept mild + darkening-led
+       so they clear the ink's contrast floor on their own. */
+  --fpc-pattern-hi: var(
+    --flip-card-color-fpc-pattern-hi,
+    color-mix(in srgb, var(--fpc-navy-top) 92%, #ffffff 8%)
+  );
+  --fpc-pattern-lo: var(
+    --flip-card-color-fpc-pattern-lo,
+    color-mix(in srgb, var(--fpc-navy-top) 88%, #000000 12%)
+  );
+  /* Card-identity details (gold chip, network discs, signature paper, stripe)
+       are declared only by the component's OWN design system (design-systems/
+       flip-card). When another DS is assigned, the generated design-tokens.css
+       drops them and every var() below would resolve empty — collapsing the
+       chip, discs, stripe, signature panel and even the color-mix() card
+       shadows into nothing. Authored fallbacks keep the identity alive under
+       every design system. */
+  --fpc-chip-1: var(--color-chip-1, #ffecc7);
+  --fpc-chip-2: var(--color-chip-2, #d0b978);
+  --fpc-chip-core-1: var(--color-chip-core-1, #efdbab);
+  --fpc-chip-core-2: var(--color-chip-core-2, #e1cb94);
+  --fpc-chip-line: var(--color-chip-line, #303030);
+  --fpc-chip-edge: var(--color-chip-edge, #333333);
+  --fpc-metal-1: var(--color-metal-1, #ededed);
+  --fpc-metal-2: var(--color-metal-2, #c2c2c2);
+  --fpc-mc-red: var(--color-mc-red, #e8102e);
+  --fpc-mc-yellow: var(--color-mc-yellow, #f6c90a);
+  --fpc-sig-ink: var(--color-sig-ink, #021318);
+  --fpc-sig-paper: var(--color-sig-paper, #ffffff);
+  --fpc-magstripe: var(--color-scrim, #000000);
+
+  --fpc-card-w: 26rem;
+  --fpc-card-h: 16rem;
+  /* DELIBERATE IDENTITY EXCEPTION — DS-immune. This is a physical payment card
+       at ISO/IEC 7810 ID-1 proportions: 1rem is the standard's 3.18mm die-cut
+       corner at this scale, 0.6rem the tighter moulded corner of the printed
+       laminate face on top of it. Retoning either stops the object reading as a
+       credit card. Documented in component.md. */
+  --fpc-card-radius: 1rem;
+  --fpc-face-radius: 0.6rem;
+  --fpc-number-space: 1.75rem;
+  --fpc-number-size: 1.6rem;
+  --fpc-number-size-sm: 1.3rem;
+  --fpc-sig-size: 1.25rem;
+  --fpc-headline-size: 0.75rem;
+}
